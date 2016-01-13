@@ -46,6 +46,8 @@ public:
     newFormat.setSampleBuffers(true);
     newFormat.setSamples(16);
     this->setFormat(newFormat);
+    if(!this->context()->isValid())
+      qDebug()<<"ERROR : OpenGL context is not valid.";
 
   }
 
