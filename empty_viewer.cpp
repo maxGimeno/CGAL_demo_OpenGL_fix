@@ -38,6 +38,7 @@ public:
     resize(500, 450);
     QOpenGLContext *context = new QOpenGLContext();
     QSurfaceFormat format;
+    format.setDepthBufferSize(24);
     format.setVersion(2,1);
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
     context->setFormat(format);
