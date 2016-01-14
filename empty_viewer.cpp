@@ -318,44 +318,82 @@ protected:
 
   virtual void draw()
   {
+    qDebug()<<"enters draw()";
     glEnable(GL_DEPTH_TEST);
-    qDebug()<<"0";
 
     if(!are_buffers_initialized)
       initialize_buffers();
-qDebug()<<"1";
     QColor color;
     vao[0].bind();
     attrib_buffers(this);
-    qDebug()<<"2";
     color.setRgbF(0.1f, 0.7f, 0.1f);
     rendering_program.bind();
-    qDebug()<<"3";
     rendering_program.setUniformValue(colorLocation2,color);
-    qDebug()<<"4";
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
-    qDebug()<<"5";
     rendering_program.release();
     vao[0].release();
+    qDebug()<<"exit draw()";
+  }
 
-    vao[2].bind();
-    attrib_buffers(this);
-    color.setRgbF(0.2f, 0.2f, 0.7f);
-    rendering_program_p_l.bind();
-    rendering_program_p_l.setAttributeValue(colorLocation,color);
-    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
-    rendering_program_p_l.release();
-    vao[2].release();
+  void postDraw()
+  {
+    qDebug()<<"enters postDraw()";
+        // Reset model view matrix to world coordinates origin
+          glMatrixMode(GL_MODELVIEW);
+          glPushMatrix();
+          qDebug()<<"0";
+          camera()->loadModelViewMatrix();
+          // TODO restore model loadProjectionMatrixStereo
 
-    ::glPointSize(7.f);
-    vao[3].bind();
-    attrib_buffers(this);
-    color.setRgbF(.2f,.2f,.6f);
-    rendering_program_p_l.bind();
-    rendering_program_p_l.setAttributeValue(colorLocation,color);
-    glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
-    rendering_program_p_l.release();
-    vao[3].release();
+          // Save OpenGL state
+          glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+          // Set neutral GL state
+          glDisable(GL_TEXTURE_1D);
+          glDisable(GL_TEXTURE_2D);
+  #ifdef GL_TEXTURE_3D  // OpenGL 1.2 Only...
+          glDisable(GL_TEXTURE_3D);
+  #endif
+
+          glDisable(GL_TEXTURE_GEN_Q);
+          glDisable(GL_TEXTURE_GEN_R);
+          glDisable(GL_TEXTURE_GEN_S);
+          glDisable(GL_TEXTURE_GEN_T);
+
+  #ifdef GL_RESCALE_NORMAL  // OpenGL 1.2 Only...
+          glEnable(GL_RESCALE_NORMAL);
+  #endif
+
+          glDisable(GL_COLOR_MATERIAL);
+          qglColor(foregroundColor());
+
+          if (cameraIsEdited())
+                  camera()->drawAllPaths();
+
+          qDebug()<<"1";
+          // Pivot point, line when camera rolls, zoom region
+          drawVisualHints();
+          qDebug()<<"2";
+
+          if (gridIsDrawn()) { glLineWidth(1.0); drawGrid(camera()->sceneRadius()); }
+          if (axisIsDrawn()) { glLineWidth(2.0); drawAxis(camera()->sceneRadius()); }
+          qDebug()<<"3";
+
+          // Restore foregroundColor
+          float color[4];
+          color[0] = foregroundColor().red()   / 255.0f;
+          color[1] = foregroundColor().green() / 255.0f;
+          color[2] = foregroundColor().blue()  / 255.0f;
+          color[3] = 1.0;
+          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+          glDisable(GL_LIGHTING);
+          glDisable(GL_DEPTH_TEST);
+          qDebug()<<"4";
+
+          // Restore GL state
+          glPopAttrib();
+      glPopMatrix();
+      qDebug()<<"exits postDraw()";
   }
 
   virtual void init()
