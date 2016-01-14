@@ -22,13 +22,13 @@
 
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
-class EmptyViewerQt : public QGLViewer, public QOpenGLFunctions_2_1
+class EmptyViewerQt : public QGLViewer, public QOpenGLFunctions
 {
 public:
   // Constructor/Destructor
@@ -47,14 +47,36 @@ public:
     newFormat.setSampleBuffers(true);
     newFormat.setSamples(16);
     this->setFormat(newFormat);
-    if(!this->context()->isValid())
-      qDebug()<<"ERROR : OpenGL context is not valid.";
+
+    pos_facets.resize(0);
+    pos_facets.push_back(1.0);
+    pos_facets.push_back(0.0);
+    pos_facets.push_back(0.0);
+
+    pos_facets.push_back(0.0);
+    pos_facets.push_back(1.0);
+    pos_facets.push_back(0.0);
+
+    pos_facets.push_back(0.0);
+    pos_facets.push_back(0.0);
+    pos_facets.push_back(1.0);
+
+    flat_normals.push_back(0.0);
+    flat_normals.push_back(0.0);
+    flat_normals.push_back(1.0);
+    flat_normals.push_back(0.0);
+    flat_normals.push_back(0.0);
+    flat_normals.push_back(1.0);
+    flat_normals.push_back(0.0);
+    flat_normals.push_back(0.0);
+    flat_normals.push_back(1.0);
+
 
   }
 
   ~EmptyViewerQt()
   {
-   /* buffers[0].destroy();
+    buffers[0].destroy();
     buffers[1].destroy();
     buffers[2].destroy();
     buffers[3].destroy();
@@ -63,12 +85,12 @@ public:
     vao[0].destroy();
     vao[1].destroy();
     vao[2].destroy();
-    vao[3].destroy();*/
+    vao[3].destroy();
   }
 
 protected:
   void compile_shaders()
-  {/*
+  {
     if(!buffers[0].create() || !buffers[1].create() || !buffers[2].create() ||
        !buffers[3].create() || !buffers[4].create() || !buffers[5].create())
     {
@@ -204,13 +226,13 @@ protected:
     {
       std::cerr<<"linking Program FAILED"<<std::endl;
     }
-    rendering_program_p_l.bind();*/
+    rendering_program_p_l.bind();
   }
 
   void initialize_buffers()
   {
     //points of the facets
-  /*  vao[0].bind();
+    vao[0].bind();
     buffers[0].bind();
     buffers[0].allocate(pos_facets.data(),
                         static_cast<int>(pos_facets.size()*sizeof(float)));
@@ -234,64 +256,12 @@ protected:
 
     vao[0].release();
 
-    vao[1].bind();
-
-    //points of the facets
-    buffers[2].bind();
-    buffers[2].allocate(pos_facets.data(),
-                        static_cast<int>(pos_facets.size()*sizeof(float)));
-    vertexLocation[1] = rendering_program.attributeLocation("vertex");
-    rendering_program.bind();
-    rendering_program.enableAttributeArray(vertexLocation[1]);
-    rendering_program.setAttributeBuffer(vertexLocation[1],GL_FLOAT,0,3);
-    rendering_program.release();
-    buffers[2].release();
-
-    //normals of the facets
-    buffers[3].bind();
-    buffers[3].allocate(smooth_normals.data(),
-                        static_cast<int>(smooth_normals.size()*sizeof(float)));
-    normalsLocation = rendering_program.attributeLocation("normal");
-    rendering_program.bind();
-    rendering_program.enableAttributeArray(normalsLocation);
-    rendering_program.setAttributeBuffer(normalsLocation,GL_FLOAT,0,3);
-    rendering_program.release();
-    buffers[3].release();
-
-    vao[1].release();
-
-    //The lines
-    vao[2].bind();
-
-    buffers[4].bind();
-    buffers[4].allocate(pos_lines.data(), static_cast<int>(pos_lines.size()*sizeof(float)));
-    vertexLocation[2] = rendering_program_p_l.attributeLocation("vertex");
-    rendering_program_p_l.bind();
-    rendering_program_p_l.enableAttributeArray(vertexLocation[2]);
-    rendering_program_p_l.setAttributeBuffer(vertexLocation[2],GL_FLOAT,0,3);
-    buffers[4].release();
-    rendering_program_p_l.release();
-
-    vao[2].release();
-
-    //The points
-    vao[3].bind();
-    buffers[5].bind();
-    buffers[5].allocate(pos_points.data(), static_cast<int>(pos_points.size()*sizeof(float)));
-    vertexLocation[3] = rendering_program_p_l.attributeLocation("vertex");
-    rendering_program_p_l.bind();
-    rendering_program_p_l.enableAttributeArray(vertexLocation[3]);
-    rendering_program_p_l.setAttributeBuffer(vertexLocation[3],GL_FLOAT,0,3);
-    buffers[5].release();
-    rendering_program_p_l.release();
-    vao[3].release();
-
-    are_buffers_initialized = true;*/
+    are_buffers_initialized = true;
   }
 
   void attrib_buffers(QGLViewer* viewer)
   {
-   /* QMatrix4x4 mvpMatrix;
+    QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
     double mat[16];
     viewer->camera()->getModelViewProjectionMatrix(mat);
@@ -343,22 +313,28 @@ protected:
     mvpLocation[1] = rendering_program_p_l.uniformLocation("mvp_matrix");
     colorLocation = rendering_program_p_l.uniformLocation("color");
     rendering_program.setUniformValue(mvpLocation[1], mvpMatrix);
-    rendering_program_p_l.release();*/
+    rendering_program_p_l.release();
   }
 
   virtual void draw()
   {
     glEnable(GL_DEPTH_TEST);
-    /*if(!are_buffers_initialized)
-      initialize_buffers();
+    qDebug()<<"0";
 
+    if(!are_buffers_initialized)
+      initialize_buffers();
+qDebug()<<"1";
     QColor color;
     vao[0].bind();
     attrib_buffers(this);
+    qDebug()<<"2";
     color.setRgbF(0.1f, 0.7f, 0.1f);
     rendering_program.bind();
+    qDebug()<<"3";
     rendering_program.setUniformValue(colorLocation2,color);
+    qDebug()<<"4";
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
+    qDebug()<<"5";
     rendering_program.release();
     vao[0].release();
 
@@ -379,7 +355,7 @@ protected:
     rendering_program_p_l.setAttributeValue(colorLocation,color);
     glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
     rendering_program_p_l.release();
-    vao[3].release();*/
+    vao[3].release();
   }
 
   virtual void init()
@@ -391,25 +367,25 @@ protected:
     setShortcut(EXIT_VIEWER, Qt::CTRL+Qt::Key_Q);
 
     // Light default parameters
-   /* ::glLineWidth(2.4f);
-    ::glPointSize(7.f);
-    ::glEnable(GL_POLYGON_OFFSET_FILL);
-    ::glPolygonOffset(1.f,1.f);
-    ::glClearColor(1.0f,1.0f,1.0f,0.0f);
-    ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-
-    ::glEnable(GL_LIGHTING);
-
-    ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-
-    ::glShadeModel(GL_FLAT);
-    ::glDisable(GL_BLEND);
-    ::glDisable(GL_LINE_SMOOTH);
-    ::glDisable(GL_POLYGON_SMOOTH_HINT);
-    ::glBlendFunc(GL_ONE, GL_ZERO);
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);*/
-
     initializeOpenGLFunctions();
+    glLineWidth(2.4f);
+    glPointSize(7.f);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(1.f,1.f);
+    glClearColor(1.0f,1.0f,1.0f,0.0f);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+
+    glEnable(GL_LIGHTING);
+
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+
+    glShadeModel(GL_FLAT);
+    glDisable(GL_BLEND);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_POLYGON_SMOOTH_HINT);
+    glBlendFunc(GL_ONE, GL_ZERO);
+    glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+
     compile_shaders();
 
     this->showEntireScene();
