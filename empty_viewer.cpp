@@ -409,7 +409,7 @@ protected:
     ::glBlendFunc(GL_ONE, GL_ZERO);
     ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);*/
 
-    initializeOpenGLFunctions();
+    //initializeOpenGLFunctions();
     compile_shaders();
 
     this->showEntireScene();
