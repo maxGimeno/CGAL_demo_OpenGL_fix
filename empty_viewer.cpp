@@ -22,13 +22,13 @@
 
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
-class EmptyViewerQt : public QGLViewer, public QOpenGLFunctions_2_1
+class EmptyViewerQt : public QGLViewer, public QOpenGLFunctions
 {
 public:
   // Constructor/Destructor
@@ -36,20 +36,6 @@ public:
   {
     setWindowTitle("Empty viewer");
     resize(500, 450);
-    QOpenGLContext *context = new QOpenGLContext();
-    QSurfaceFormat format;
-    format.setDepthBufferSize(24);
-    format.setVersion(2,1);
-    format.setProfile(QSurfaceFormat::CompatibilityProfile);
-    context->setFormat(format);
-    QGLViewer(QGLContext::fromOpenGLContext(context));
-    QGLFormat newFormat = this->format();
-    newFormat.setSampleBuffers(true);
-    newFormat.setSamples(16);
-    this->setFormat(newFormat);
-    if(!this->context()->isValid())
-      qDebug()<<"ERROR : OpenGL context is not valid.";
-
   }
 
   ~EmptyViewerQt()
@@ -410,6 +396,8 @@ protected:
     ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);*/
 
     initializeOpenGLFunctions();
+    if(!this->context()->isValid())
+      qDebug()<<"ERROR : OpenGL context is not valid.";
     compile_shaders();
 
     this->showEntireScene();
