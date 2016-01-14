@@ -54,7 +54,7 @@ public:
 
   ~EmptyViewerQt()
   {
-    buffers[0].destroy();
+   /* buffers[0].destroy();
     buffers[1].destroy();
     buffers[2].destroy();
     buffers[3].destroy();
@@ -63,12 +63,12 @@ public:
     vao[0].destroy();
     vao[1].destroy();
     vao[2].destroy();
-    vao[3].destroy();
+    vao[3].destroy();*/
   }
 
 protected:
   void compile_shaders()
-  {
+  {/*
     if(!buffers[0].create() || !buffers[1].create() || !buffers[2].create() ||
        !buffers[3].create() || !buffers[4].create() || !buffers[5].create())
     {
@@ -204,13 +204,13 @@ protected:
     {
       std::cerr<<"linking Program FAILED"<<std::endl;
     }
-    rendering_program_p_l.bind();
+    rendering_program_p_l.bind();*/
   }
 
   void initialize_buffers()
   {
     //points of the facets
-    vao[0].bind();
+  /*  vao[0].bind();
     buffers[0].bind();
     buffers[0].allocate(pos_facets.data(),
                         static_cast<int>(pos_facets.size()*sizeof(float)));
@@ -286,12 +286,12 @@ protected:
     rendering_program_p_l.release();
     vao[3].release();
 
-    are_buffers_initialized = true;
+    are_buffers_initialized = true;*/
   }
 
   void attrib_buffers(QGLViewer* viewer)
   {
-    QMatrix4x4 mvpMatrix;
+   /* QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
     double mat[16];
     viewer->camera()->getModelViewProjectionMatrix(mat);
@@ -343,13 +343,13 @@ protected:
     mvpLocation[1] = rendering_program_p_l.uniformLocation("mvp_matrix");
     colorLocation = rendering_program_p_l.uniformLocation("color");
     rendering_program.setUniformValue(mvpLocation[1], mvpMatrix);
-    rendering_program_p_l.release();
+    rendering_program_p_l.release();*/
   }
 
   virtual void draw()
   {
     glEnable(GL_DEPTH_TEST);
-    if(!are_buffers_initialized)
+    /*if(!are_buffers_initialized)
       initialize_buffers();
 
     QColor color;
@@ -379,7 +379,7 @@ protected:
     rendering_program_p_l.setAttributeValue(colorLocation,color);
     glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
     rendering_program_p_l.release();
-    vao[3].release();
+    vao[3].release();*/
   }
 
   virtual void init()
@@ -391,7 +391,7 @@ protected:
     setShortcut(EXIT_VIEWER, Qt::CTRL+Qt::Key_Q);
 
     // Light default parameters
-    ::glLineWidth(2.4f);
+   /* ::glLineWidth(2.4f);
     ::glPointSize(7.f);
     ::glEnable(GL_POLYGON_OFFSET_FILL);
     ::glPolygonOffset(1.f,1.f);
@@ -407,45 +407,12 @@ protected:
     ::glDisable(GL_LINE_SMOOTH);
     ::glDisable(GL_POLYGON_SMOOTH_HINT);
     ::glBlendFunc(GL_ONE, GL_ZERO);
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+    ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);*/
 
     initializeOpenGLFunctions();
     compile_shaders();
 
     this->showEntireScene();
-  }
-
-
-  virtual QString helpString() const
-  {
-    QString text("<h2>L C C   V i e w e r</h2>");
-    text += "Use the mouse to move the camera around the object. ";
-    text += "You can respectively revolve around, zoom and translate with "
-      "the three mouse buttons. ";
-    text += "Left and middle buttons pressed together rotate around the "
-      "camera view direction axis<br><br>";
-    text += "Pressing <b>Alt</b> and one of the function keys "
-      "(<b>F1</b>..<b>F12</b>) defines a camera keyFrame. ";
-    text += "Simply press the function key again to restore it. "
-      "Several keyFrames define a ";
-    text += "camera path. Paths are saved when you quit the application "
-      "and restored at next start.<br><br>";
-    text += "Press <b>F</b> to display the frame rate, <b>A</b> for the "
-      "world axis, ";
-    text += "<b>Alt+Return</b> for full screen mode and <b>Control+S</b> "
-      "to save a snapshot. ";
-    text += "See the <b>Keyboard</b> tab in this window for a complete "
-      "shortcut list.<br><br>";
-    text += "Double clicks automates single click actions: A left button "
-      "double click aligns the closer axis with the camera (if close enough). ";
-    text += "A middle button double click fits the zoom of the camera and "
-      "the right button re-centers the scene.<br><br>";
-    text += "A left button double click while holding right button pressed "
-      "defines the camera <i>Revolve Around Point</i>. ";
-    text += "See the <b>Mouse</b> tab and the documentation web pages for "
-      "details.<br><br>";
-    text += "Press <b>Escape</b> to exit the viewer.";
-    return text;
   }
 
 private:
