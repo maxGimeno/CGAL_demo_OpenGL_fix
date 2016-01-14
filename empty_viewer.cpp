@@ -341,7 +341,6 @@ protected:
         // Reset model view matrix to world coordinates origin
           glMatrixMode(GL_MODELVIEW);
           glPushMatrix();
-          qDebug()<<"0";
           camera()->loadModelViewMatrix();
           // TODO restore model loadProjectionMatrixStereo
 
@@ -365,19 +364,15 @@ protected:
   #endif
 
           glDisable(GL_COLOR_MATERIAL);
-          qglColor(foregroundColor());
 
           if (cameraIsEdited())
                   camera()->drawAllPaths();
 
-          qDebug()<<"1";
           // Pivot point, line when camera rolls, zoom region
           drawVisualHints();
-          qDebug()<<"2";
 
           if (gridIsDrawn()) { glLineWidth(1.0); drawGrid(camera()->sceneRadius()); }
           if (axisIsDrawn()) { glLineWidth(2.0); drawAxis(camera()->sceneRadius()); }
-          qDebug()<<"3";
 
           // Restore foregroundColor
           float color[4];
@@ -388,7 +383,6 @@ protected:
           glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
           glDisable(GL_LIGHTING);
           glDisable(GL_DEPTH_TEST);
-          qDebug()<<"4";
 
           // Restore GL state
           glPopAttrib();
